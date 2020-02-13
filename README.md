@@ -55,20 +55,20 @@ To add a manager to this swarm, run 'docker swarm join-token manager' and follow
 ```
 To add a worker to the swarm we should ssh into the two workers and run the `docker swarm join` command followed by the token.
 
-Into the manager, you can see the node of the swarm with the command: `docker node ls`
+Into the manager1, you can see the node of the swarm with the command: `docker node ls`
 
 
 ## STACK DEPLOYMENT
-We have decided to deploy an application stack to the swarm. To do that we first created the application using the Dockerfile, the docker-compose file, the requirements and the phyton app. Then we created a registry to distribute the images to all the nodes, pushed the images and created the stack.
+We have decided to deploy an application stack to the swarm. Then we created a registry to distribute the images to all the nodes, pushed the images on it and created the stack.
 
 ### Create the application
 To create the application we have created the files required into a directory in the manager1:
-- Dockerfile
-- docker-compose.yml
 - app.py
 - requirements.txt
+- Dockerfile
+- docker-compose.yml
 
-Into the manager1 we entered the directory with all the files and ran the command: `docker-compose up -d`
+To create the image' app ran the command: `docker-compose up -d`
 
 Then we can see that the app is running using: `docker-compose ps` to see the processes running
 Then we can test the app using: `curl http://localhost:8000`
@@ -78,8 +78,7 @@ The output of the curl should be: `Hello World! I have been seen 1 times.`
 We can test the web server also searching the `http://*manager1-ip*:8000` url on your browser.
 
 ### Create the registry
-We created a registry to distribute the images to all the nodes.
-It is done using the command: `docker service create --name registry --publish published=5000,target=5000 registry:2`
+To distribute the images to all the nodes, aregistry is necessary: `docker service create --name registry --publish published=5000,target=5000 registry:2`
 
 We can check the status of the service using: `docker-service ls`
 
@@ -124,8 +123,7 @@ swarmpit/install:1.8
 Then we can access on Swarmpit with the credentials using `http://*manager-ip*:888` url on the browser.
 
 ## TASK DISTRIBUTION
-Tasks are distributed on active nodes in the swarm. A node can be put in drain availability to prevent it receiving tasks. To do that we can use:
-`docker node update --availability drain *host-name*`
+Tasks are distributed on active nodes in the swarm. A node can be set in drain availability to prevent it receiving tasks: `docker node update --availability drain *host-name*`
 
 We can check the availability of the nodes using: `docker node ls`
 
@@ -157,6 +155,5 @@ Finally we can do the push: `docker push *docker-hub-repository*`
 
 Now the image is available on Docker Hub and can be pulled and run by everyone.
 
-
 ## AUTHORS
-This project has been developed by **Lucrezia Ruggeri**, **Sara Layachi**, **Carlotta Neri** commands **Elisabetta Rossetti**, as assignment of the 'Design of Network and Communication Systems' course of University of Trento.
+This project has been developed by **Lucrezia Ruggeri**, **Sara Layachi**, **Carlotta Neri** and **Elisabetta Rossetti**, as assignment of the 'Design of Network and Communication Systems' course of University of Trento.
