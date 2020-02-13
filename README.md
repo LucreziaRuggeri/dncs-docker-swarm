@@ -153,7 +153,7 @@ Then login: `docker login --username=*username*` and enter the password.
 
 Finally we can do the push: `docker push *docker-hub-repository*`
 
-Now the image is available on Docker Hub and can be pulled and run by everyone.
+Now the image is available on Docker Hub and can be pulled and run by everyone and everywhere.
 
 ## AUTHORS
 This project has been developed by **Lucrezia Ruggeri**, **Sara Layachi**, **Carlotta Neri** and **Elisabetta Rossetti**, as assignment of the 'Design of Network and Communication Systems' course of University of Trento.
