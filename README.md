@@ -39,8 +39,6 @@ To initialize the swarm we have to start the manager1 and log in, using the comm
 
 Once we are in the manager1, we have to init the swarm:
 
-`docker-machine ssh manager1`
-
 `docker swarm init --advertise-addr *manager-ip*`
 
 The output of the `docker swarm init` is a command, that should be like:
@@ -55,11 +53,11 @@ To add a manager to this swarm, run 'docker swarm join-token manager' and follow
 ```
 To add a worker to the swarm we should ssh into the two workers and run the `docker swarm join` command followed by the token.
 
-Into the manager1, you can see the node of the swarm with the command: `docker node ls`
+Into the manager1, we can see the node of the swarm with the command: `docker node ls`
 
 
 ## STACK DEPLOYMENT
-We have decided to deploy an application stack to the swarm. Then we created a registry to distribute the images to all the nodes, pushed the images on it and created the stack.
+We have decided to deploy an application stack to the swarm. We created a registry to distribute the images to all the nodes, pushed the images on it and created the stack.
 
 ### Create the application
 To create the application we have created the files required into a directory in the manager1:
@@ -68,21 +66,21 @@ To create the application we have created the files required into a directory in
 - Dockerfile
 - docker-compose.yml
 
-To create the image' app ran the command: `docker-compose up -d`
+To create the image's app we ran the command: `docker-compose up -d`
 
-Then we can see that the app is running using: `docker-compose ps` to see the processes running
-Then we can test the app using: `curl http://localhost:8000`
+Then we can see that the app is running using: `docker-compose ps`
+and test the app using: `curl http://localhost:8000`
 
 The output of the curl should be: `Hello World! I have been seen 1 times.`
 
-We can test the web server also searching the `http://*manager1-ip*:8000` url on your browser.
+We can also test the web server searching the `http://*manager1-ip*:8000` url on the browser.
 
 ### Create the registry
-To distribute the images to all the nodes, aregistry is necessary: `docker service create --name registry --publish published=5000,target=5000 registry:2`
+To distribute the images to all the nodes, a registry is necessary: `docker service create --name registry --publish published=5000,target=5000 registry:2`
 
 We can check the status of the service using: `docker-service ls`
+and check if it's working using: `curl http://localhost:5000/v2/`
 
-And check if it's working using: `curl http://localhost:5000/v2/`
 The output should be: `{}`
 
 Then we distributed the web app’s image across the swarm using: `docker-compose push`
@@ -97,7 +95,7 @@ and test the app with curl: `curl http://localhost:8000`
 The output should be: `Hello World! I have been seen 2 times.`
 
 ## SCALE THE SERVICE
-We can change the scale of a service using: `docker service scale *service-name*=5`
+We can change the scale of a service replicating it **n** times using: `docker service scale *service-name*=*n*`
 and check the distribution of the tasks using: `docker service ps *service-name*`
 
 The output should be:
@@ -113,26 +111,26 @@ kcfx7072d85o        stackdemo_web.5       127.0.0.1:5000/stackdemo:latest   work
 ```                                                        
 
 ## SWARMPIT
-We used Swarmpit to monitor the swarm. To install Swarmpit we run on the manager:
+We used Swarmpit to monitor the swarm. To install it we ran on the manager:
 ```
 docker run -it --rm \
   --name swarmpit-installer \
   --volume /var/run/docker.sock:/var/run/docker.sock \
 swarmpit/install:1.8
 ```
-Then we can access on Swarmpit with the credentials using `http://*manager-ip*:888` url on the browser.
+Then we can access on Swarmpit with the credentials specified during the installation using `http://*manager-ip*:888` url on the browser.
 
 ## TASK DISTRIBUTION
-Tasks are distributed on active nodes in the swarm. A node can be set in drain availability to prevent it receiving tasks: `docker node update --availability drain *host-name*`
+Tasks are distributed on active nodes in the swarm. A node can be set in drain availability to prevent it receiving tasks. To do that we can use: `docker node update --availability drain *host-name*`
 
 We can check the availability of the nodes using: `docker node ls`
 
 We can run: `docker service ps *service-name*` to see how the manager updated the tasks.
 
-To return the drained node to an active state run: `docker node update --availability active *host-name*` and change the scale of the service to 0, and then to 5 to update the distribution of the task.
+To return the drained node to an active state run: `docker node update --availability active *host-name*` and change the scale of the service to 0, and then to **n** to update the distribution of the tasks.
 
 ## LOAD BALANCING
-The swarm manager uses ingress load balancing to expose the services and make them available externally to the swarm. However we have implemented an external load balancer using Traefik image.
+The swarm manager uses ingress load balancing to expose the services and make them available externally to the swarm. However, we have implemented an external load balancer using Traefik image.
 
 First we created the overlay network using: `docker network create --driver=overlay treafik-net`
 
@@ -149,7 +147,7 @@ We can see the web interface of Traefik on the url: `http://*manager-ip:8080*`
 ## MIGRATION
 To create a new image from a container changes we used docker commit command: `docker commit *container-id* *docker-hub-repository*`
 
-Then login: `docker login --username=*username*` and enter the password.
+Then log in: `docker login --username=*username*` and enter the password.
 
 Finally we can do the push: `docker push *docker-hub-repository*`
 
